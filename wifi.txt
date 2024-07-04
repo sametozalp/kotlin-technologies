@@ -1,0 +1,2 @@
+#define WIFI_SSID "TTNET_TP-LINK_4DCF"
+#define WIFI_PASSWORD "Dw7wa0Xu"

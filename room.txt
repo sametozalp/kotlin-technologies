@@ -1,0 +1,26 @@
+kütüphane ekle
+
+Modele Entity(tablename) ekle
+
+model kolonlarını @ColumnInfo(name) şeklinde ekle
+
+primary key ver
+
+Dao:
+	Dao bir interfacedir
+	veritabanında kullanmak istediğimiz fonksiyonları kullanırız
+	interface başına @Dao yazarız
+	@Insert @Query fonklara yazarız
+	rebuild ederiz
+
+Database sınıfı:
+	abstract olmalı
+	RoomDatabase()'e extend etmeli
+	içerisinde abstract bir fonk yazıp daoyu döndürmeliyiz
+	veritabanından tek bir obje oluşmasını istiyoruz (singleton)
+	singleton yapısı kur başına @Volatile ekle. volatile diğer threadlere görünür hale getirir
+	database oluşturma fonku yaz
+
+Viewmodel:
+	Coroutines kullan
+	

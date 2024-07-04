@@ -1,0 +1,91 @@
+servis:
+	api arayüzü
+	api servis
+
+------------------------------------------------------------
+
+api arayüzünde:
+	@GET
+	fonk yaz ve alacağımız veri ne döndür
+
+------------------------------------------------------------
+
+api servisinde:
+	base url
+
+	private val api = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+        .build()
+        .create(UserAPI::class.java)
+
+	fun getData(id: Int): Single<User> {
+        return api.getUser(id)
+    }
+
+------------------------------------------------------------
+
+viewModelde:
+	disposable kullanımı:
+	    private val disposable = CompositeDisposable()
+
+	gözlemlenecek veriler:
+		var me = MutableLiveData<User>()
+    		var meError = MutableLiveData<Boolean>()
+    		var meLoading = MutableLiveData<Boolean>()
+	
+	fun getUser() {
+        getDataFromAPI()
+    }
+
+    private fun getDataFromAPI() {
+
+        disposable.add(
+            userAPIService.getData(5)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(object : DisposableSingleObserver<User>() {
+                    override fun onSuccess(t: User) {
+                        me.value = t
+                        meError.value = false
+                        meError.value = false
+                    }
+
+                    override fun onError(e: Throwable) {
+                        meError.value = true
+                        meLoading.value = false
+                        println(e.localizedMessage)
+                    }
+                })
+
+        )
+    }
+
+------------------------------------------------------------
+
+view:
+	viewModel = ViewModelProvider(this).get(SplashViewModel::class.java)
+        viewModel.getUser()
+
+        observeLiveData()
+	fun observeLiveData() {
+        viewModel.me.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                println(it.id)
+                println(it.name)
+            }
+        })
+
+        viewModel.meError.observe(viewLifecycleOwner, Observer {
+            it?.let {
+
+            }
+        })
+
+        viewModel.meLoading.observe(viewLifecycleOwner, Observer {
+            it?.let {
+
+            }
+        })
+    	}
